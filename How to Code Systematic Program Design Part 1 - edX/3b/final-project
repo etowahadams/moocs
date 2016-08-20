@@ -1,0 +1,109 @@
+(require 2htdp/image)
+(require 2htdp/universe)
+
+;; Grow Flower
+
+;; =================
+;; Constants:
+
+(define WIDTH 500)
+(define HEIGHT 500)
+(define CTR-X (/ WIDTH 2))
+(define CTR-Y (/ HEIGHT 2))
+(define MTS (empty-scene WIDTH HEIGHT))
+
+(define STEM-GROW-RATE 3)
+(define STEM-COLOR "green")
+(define STEM-WIDTH 15)
+(define STEM-MAX-HEIGHT 200)
+(define FLOWER-IMAGE .)    ; image of flower here
+
+
+;; =================
+;; Data definitions:
+
+(define-struct fs (stem x y))
+;; FS is (make-fs (Natrual Integer Integer)
+;; interp. FS represents the flower state
+;;    - stem is the stem height, in pixels
+;;    - x is the x-coordinate of flower with stem
+;;    - y is the y-coordinate of flower with stem
+
+(define F1 (make-fs 10 35 42))
+
+#;
+(define (fn-for-fs f)
+  (... (fs-stem f)
+       (fs-x    f)
+       (fs-y    f)))
+
+;; Template rules used:
+;; compound data - 3 fields
+
+
+;; =================
+;; Functions:
+
+;; FS -> FS
+;; start the world with (main (make-fs 0 CTR-X CTR-Y))
+(define (main f)
+  (big-bang f                                ; FS
+            (on-tick   grow)                 ; FS -> FS
+            (to-draw   render)               ; FS -> Image
+            (on-mouse  create-flower)))      ; FS Integer Integer MouseEvent -> FS
+
+;; FS -> FS
+;; Updates the stem's length based on STEM-GROW-RATE and STEM-MAX-HEIGHT. 
+
+(check-expect (grow (make-fs 3 10 10)) (make-fs (+ 3 STEM-GROW-RATE)
+                                                10
+                                                (- 10 (/ STEM-GROW-RATE 2))))
+(check-expect (grow (make-fs STEM-MAX-HEIGHT 10 10)) (make-fs STEM-MAX-HEIGHT
+                                                              10
+                                                              10))
+            
+;(define (grow f) F1)   ;stub
+;<template from FS>
+
+(define (grow f)
+  (if (>= (fs-stem f) STEM-MAX-HEIGHT)
+      (make-fs (fs-stem f)
+               (fs-x f)
+               (fs-y f))
+      (make-fs (+ (fs-stem f) STEM-GROW-RATE)
+               (fs-x  f)
+               (- (fs-y f) (/ STEM-GROW-RATE 2)))))  ; in order for the base of the stem
+                                                     ; stay in place, due to (x, y) positioning in center of image
+
+
+;; FS -> Image
+;; renders the image of the flower in correct place with
+;; corresponding stem size, color, and width
+(check-expect (render (make-fs 0 30 30)) (place-image (above FLOWER-IMAGE
+                                                             (rectangle STEM-WIDTH 0 "solid" STEM-COLOR))
+                                                      30
+                                                      30
+                                                      MTS))
+
+;(define (render f) (square 0 "solid" "white"))   ;stub
+;<template from FS>
+
+(define (render f)
+  (place-image (above FLOWER-IMAGE
+                      (rectangle STEM-WIDTH (fs-stem f) "solid" STEM-COLOR))
+               (fs-x f)
+               (fs-y f)
+                MTS))
+
+;; FS Integer Integer MouseEvent -> FS
+;; creates a new flower state where mouse-down
+(check-expect (create-flower (make-fs 10 40 50) 30 46 "button-up") (make-fs 0 30 46))
+(check-expect (create-flower (make-fs 0 60 53) 74 26 "enter") (make-fs 0 60 53))
+
+;(define (create-flower f x y me) F1)   ;stub
+;<template from FS>
+
+(define (create-flower f x y me)
+  (if   (mouse=? "button-up" me)
+        (make-fs 0 x y)
+        f))
