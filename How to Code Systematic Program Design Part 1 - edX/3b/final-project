@@ -53,7 +53,7 @@
             (on-mouse  create-flower)))      ; FS Integer Integer MouseEvent -> FS
 
 ;; FS -> FS
-;; Updates the stem's length based on STEM-GROW-RATE and STEM-MAX-HEIGHT. 
+;; Updates the stem's height based on STEM-GROW-RATE and STEM-MAX-HEIGHT. 
 
 (check-expect (grow (make-fs 3 10 10)) (make-fs (+ 3 STEM-GROW-RATE)
                                                 10
