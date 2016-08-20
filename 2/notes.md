@@ -1,6 +1,6 @@
 ## How to Design Data
 
-###### cond Expressions
+##### cond Expressions
 Format: 
 ```
 (cond [<expression> <expression>])]
@@ -13,7 +13,7 @@ where the first expression is the question, the second is an answer, and the las
 3. If first question is true/else, replace entire `cond` with answer
 4. If first question is false, drop the first q/a pair and replace with new `cond` 
 
-###### Data Definitions
+##### Data Definitions
 Data definitions explain how information is represented as data. This affects the design of functions that operate on that data.
 
 Programs, through data, have to interpret information in the proplem domain. ex. "a light is red" represented by a "0" in the program data
@@ -30,7 +30,8 @@ It simplifies functions by
 - generating examples
 - providing tempates
 
-Recipe:
+###### Recipe:
+
 1. Possible structure
 2. Type comment which defines new type name and describes how to form data of that type
 3. Interpretation that describes relation between info and data
