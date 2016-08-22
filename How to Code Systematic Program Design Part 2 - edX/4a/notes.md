@@ -20,7 +20,7 @@ empty   ;empty list of values
 
 Arbitrary data requires self-reference in type comment which incurrs a natural recursion
 
-A well formed self-rederence:
+A well formed self-reference:
 - at least one base case
 - at least one self reference case
 
